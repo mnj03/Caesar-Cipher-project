@@ -6,7 +6,13 @@ let messageOutput = document.querySelector("#message-output");
 
 let message = messageInput.value;
 
+let encodeBtn = document.querySelector("#encode");
+
+let decodeBtn = document.querySelector("#decode");
+
 messageInput.addEventListener("input", characterInput, false);
+
+messageOutput.addEventListener("input", characterInput, false);
 
 function characterInput(e) {
     message = e.target.value;
@@ -15,6 +21,7 @@ function characterInput(e) {
 
     e.target.value = message;
     encode();
+    decode();
 }
 
 function encode() {
@@ -22,14 +29,35 @@ function encode() {
     let shift = shiftInput.value ? Number(shiftInput.value) : 0;
     console.log(shift);
 
-    for (letter of message) {
-        encodeMessage += shiftLetter(letter, shift);
+    if (encodeBtn.checked = true) {
+        for (letter of message) {
+            encodeMessage += shiftLetter(letter, shift);
+        }
+        console.log(encodeMessage);
+        messageOutput.value = encodeMessage;
     }
-    console.log(encodeMessage);
-    messageOutput.value = encodeMessage;
+
+
 }
 
 encode();
+
+function decode() {
+    let decodeMessage = "";
+    let shift = shiftInput.value ? Number(shiftInput.value) : 0;
+    console.log(shift);
+
+    if (decodeBtn.checked = true) {
+        for (letter of message) {
+            decodeMessage -= shiftLetter(letter, shift);
+        }
+        console.log(decodeMessage);
+        messageInput.value = decodeMessage;
+    }
+
+}
+
+decode();
 
 
 function shiftLetter(letter, shift) {
