@@ -19,26 +19,32 @@ function characterInput(e) {
 
 function encode(){
     let encodeMessage = "";
-    let shift = 1;
+    let shift = shiftInput.value ? Number(shiftInput.value) : 0;
+    console.log(shift);
 
     for (letter of message) {
         encodeMessage += shiftLetter(letter, shift);
     }
     console.log(encodeMessage);
+    messageOutput.value = encodeMessage;
 }
 
 encode();
 
-function shiftLetter(letter, shift){
+function shiftLetter(letter, shift) {
+
     let newLetter = "";
     
     let letterCode = letter.charCodeAt(0);
     
-    let newLetterCode = letterCode + shift;
+    let newLetterCode = letterCode + (shift % 26);
 
     if (newLetterCode < 97) {
+
         newLetterCode += 26;
+
     } else if (newLetterCode > 122) {
+        
         newLetterCode -= 26;
     }
 
