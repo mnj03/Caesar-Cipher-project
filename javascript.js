@@ -17,7 +17,7 @@ function characterInput(e) {
     encode();
 }
 
-function encode(){
+function encode() {
     let encodeMessage = "";
     let shift = shiftInput.value ? Number(shiftInput.value) : 0;
     console.log(shift);
@@ -30,6 +30,7 @@ function encode(){
 }
 
 encode();
+
 
 function shiftLetter(letter, shift) {
 
@@ -44,7 +45,7 @@ function shiftLetter(letter, shift) {
         newLetterCode += 26;
 
     } else if (newLetterCode > 122) {
-        
+
         newLetterCode -= 26;
     }
 
