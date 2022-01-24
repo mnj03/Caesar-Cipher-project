@@ -10,27 +10,39 @@
 
 <body>
     <div class="container">
+
+        <h1>Caesar Cipher</h1>
+
         <form>
         <div id="input-box">
             <label for="message-input">Input your message here</label>
-            <input type="text" id="message-input" name="message-input">
+            <input type="text" id="message-input" name="message-input" placeholder="message...">
         </div>
 
-
-        <label for="encode">Encode</label>
-        <input type="radio" id="encode" name="code-type" value="encode">
+        <br>
+        
+        <div id= key-box>
+        <label for="dhift">Shift</label>
+        <input type="number" min="0" id="shift" name="shift" placeholder="1">
+        </div>
 
         <br>
 
-
+        <div id="codetype-box">
+        <label for="encode">Encode</label>
+        <input type="radio" id="encode" name="code-type" value="encode">
+        
+        <br>
+        
         <label for="decode">Decode</label>
         <input type="radio" id="decode" name="code-type" value="decode">
-
-
+        </div>
+        
+        <br>
+        
         <div id="output-box">
             <label for="message-output">Your message output</label>
             <input type="text" id="message-output" name="message-output">
-
         </div>
         </form>
     </div>
