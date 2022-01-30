@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="test.css" type="text/css">
+</head>
+<body>
+    
+    <div class="jumbotron">
+        <h2 id="tool" class="bookmark">Caesar Cipher Tool</h2>
+
+        <div class="form-group">
+            <textarea class="form-control text-monospace" rows="4" id="srcText" oninput="updateTexts()" spellcheck="false" placeholder="Enter message here..."></textarea>
+            <div class="invalid-feedback">
+                You must enter the message.
+            </div>
+        <p id="textTools-srcText" class="collapse" style="">
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsRemoveSpaces('srcText')">Remove Spaces</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsLettersOnly('srcText')">Letters Only</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsReverse('srcText')">Reverse</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsUpperCase('srcText')">UPPER</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsLowerCase('srcText')">lower</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textTools5Groups('srcText')">5-groups</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsUndo('srcText')">Undo</button>
+        </p>
+            <p>
+                <button class="btn btn-success mt-1" type="button" onclick="copyElementText('srcText')">Copy</button>
+                <button class="btn btn-success mt-1" type="button" onclick="pasteIntoElement('srcText')">Paste</button>
+                <button class="btn btn-success mt-1 collapsed" type="button" data-toggle="collapse" data-target="#textTools-srcText" aria-expanded="false">Text Options...</button>
+            </p>
+        </div>
+
+
+        <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text" style="width: 3rem;">🔑</div>
+                        </div>
+                        <input class="form-control text-monospace" id="key1" min="0" max="100" value="0" type="number" style="max-width: 7em; width:14rem;" oninput="updateTexts()" placeholder="Shift">
+                        <div class="invalid-feedback collapse">
+                            You must enter the encryption key.
+                        </div>
+                    </div>
+                </div>
+
+
+            <div class="col-auto">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text" style="width: 3rem;">🌎</div>
+                    </div>
+                    <select class="form-control" id="language" onchange="changeLanguage();" style="width:13rem;">
+                        <option value="en" selected="">English</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="it">Italian</option>
+                        <option value="pt">Portugese</option>
+                        <option value="es">Spanish</option>
+                        <option value="sv">Swedish</option>
+                        <option value="custom">Custom...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="alphabetWrapper" class="form-inline align-items-center collapse">
+            <label for="alphabet" class="h5 m-2">Alphabet</label>
+            <input class="form-control text-monospace" id="alphabet" type="text" style="width: 25em;" oninput="updateTexts();" value="ABCDEFGHIJKLMNOPQRSTUVWXYZ" placeholder="Enter alphabet here">
+        </div>
+
+        <p>
+            <button class="btn btn-success mt-1" onclick="decodeClick();">Decode</button>
+            <button class="btn btn-success mt-1" onclick="encodeClick();">Encode</button>
+                <button class="btn btn-success mt-1" id="searchbtn" onclick="autoSolveClick();">Auto Solve (without key)</button>
+                <button class="btn btn-success mt-1 d-none" id="cancelbtn" onclick="cancel();">Cancel</button>
+                            <button class="btn btn-success mt-1" onclick="instructionsClick();">Instructions</button>
+                    </p>
+
+            <h4>Auto Solve Options</h4>
+            <div class="form-row align-items-center">
+                                                                    <div class="form-group m-2">
+                        <label for="maxResults" class="h6">Max Results</label>
+                        <input class="form-control" min="1" max="1000" value="10" type="number" id="maxResults" style="max-width: 8em;">
+                    </div>
+                <div class="form-group m-2">
+                    <label for="spacingMode" class="h6">Spacing Mode</label>
+                    <select class="form-control" id="spacingMode">
+                        <option value="0" selected="">Automatic</option>
+                        <option value="1">No Spacing</option>
+                        <option value="2">Rearrange</option>
+                        <option value="3">Keep Existing</option>
+                        <option value="4">Substitute</option>
+                    </select>
+                </div>
+            </div>
+
+        <div id="instructions" class="collapse bookmark-small">
+            <hr>
+            <h3>Instructions</h3>
+            <p>You can decode (decrypt) or encode (encrypt) your message with your key. If you don't have any key, you can try to auto solve (break) your cipher.</p>
+            <h5>Settings</h5>
+            <ul>
+
+                <li><strong>Language</strong>: The language determines the letters and statistics used for decoding, encoding and auto solving.</li>
+                                                    <li><strong>Max Results</strong>: This is the maximum number of results you will get from auto solving.</li>
+                <li><strong>Spacing Mode</strong>: This is about the spaces (word breaks) in the text. In most cases it should be set to Automatic. In case a specific letter (for instance X) is used as word separator, set it to Substitute.</li>
+            </ul>
+        </div>
+
+        <div id="result" class="collapse bookmark-small">
+            <hr>
+            <h3>Results</h3>
+            <label id="resultLabel" class="badge badge-dark" for="resultText"></label>
+        <div class="form-group">
+            <textarea class="form-control text-monospace" rows="4" id="resultText" spellcheck="false"></textarea>
+        <p id="textTools-resultText" class="collapse">
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsRemoveSpaces('resultText')">Remove Spaces</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsLettersOnly('resultText')">Letters Only</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsReverse('resultText')">Reverse</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsUpperCase('resultText')">UPPER</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsLowerCase('resultText')">lower</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textTools5Groups('resultText')">5-groups</button>
+            <button class="btn btn-success mt-1" type="button" onclick="textToolsUndo('resultText')">Undo</button>
+        </p>
+            <p>
+                <button class="btn btn-success mt-1" type="button" onclick="copyElementText('resultText')">Copy</button>
+                <button class="btn btn-success mt-1" type="button" data-toggle="collapse" data-target="#textTools-resultText">Text Options...</button>
+            </p>
+        </div>
+
+                <p id="decoderfooter" class="collapse">Not seeing the correct result? Try <strong>Auto Solve</strong> or use the <a href="/code-breaking/cipher-identifier">Cipher Identifier Tool</a>.</p>
+        </div>
+
+        <div id="autosolve" class="collapse bookmark-small">
+            <hr>
+            <h3>Auto Solve results</h3>
+
+            <div class="progress">
+                <div id="autoSolveProgress" class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 4em;">Score</th>
+                        <th scope="col" style="width: 5em;">Key</th>
+                        <th scope="col">Text</th>
+                    </tr>
+                </thead>
+                <tbody id="autosolvetbody"></tbody>
+            </table>
+            <p>Still not seeing the correct result? Then try experimenting with the Auto Solve settings or use the <a href="/code-breaking/cipher-identifier">Cipher Identifier Tool</a>.</p>
+            <button class="btn btn-success mt-1" onclick="autoSolveClose();">Close</button>
+        </div>
+
+
+    </div>
+    <script>
+
+        var DecryptMode = true;
+        var KeepAllCharacters = false;
+    
+        function encodeClick() {
+            if (!checkText() || !checkKey())
+                return;
+    
+            document.getElementById('resultLabel').innerText = 'Encoded message';
+            showElement('result');
+            hideElement('decoderfooter');
+            scrollTo('result');
+            DecryptMode = false;
+            updateTexts();
+        }
+    
+        function decodeClick() {
+            if (!checkText() || !checkKey())
+                return;
+    
+            document.getElementById('resultLabel').innerText = 'Decoded message.';
+            showElement('result');
+            showElement('decoderfooter');
+            scrollTo('result');
+            DecryptMode = true;
+            updateTexts();
+        }
+    
+        function autoSolveClick() {
+            if (typeof WebAssembly != 'object') {
+                showErrorMessage("Unfortunately your web browser doesn't support the autosolver. Try again from another device/computer or newer web browser.");
+                return;
+            }
+    
+            if (!checkText())
+                return;
+    
+            showElement('autosolve');
+            scrollTo('autosolve');
+            autosolve();
+        }
+    
+        function autoSolveClose() {
+            hideElement('autosolve');
+        }
+    
+        function explanationClick() {
+            showElement('explanation');
+            scrollTo('explanation');
+            updateExplanation();
+        }
+    
+        function instructionsClick() {
+            toggleElement('instructions');
+            scrollTo('instructions');
+        }
+    
+        function showGridClick() {
+            showElement('gridwrapper');
+            scrollTo('gridwrapper');
+        }
+    
+        function optionsClose() {
+            hideElement('options');
+        }
+    
+        function explanationClose() {
+            hideElement('explanation');
+        }
+    
+        function showElement(id) {
+            document.getElementById(id).classList.remove('collapse');
+        }
+    
+        function hideElement(id) {
+            document.getElementById(id).classList.add('collapse');
+        }
+    
+        function toggleElement(id) {
+            if (document.getElementById(id).classList.contains('collapse'))
+                showElement(id);
+            else
+                hideElement(id);
+        }
+    
+        function scrollTo(id) {
+            document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+        }
+    
+        function checkText() {
+            if (document.getElementById('srcText').value.length === 0) {
+                document.getElementById('srcText').classList.add('is-invalid');
+                return false;
+            }
+            else {
+                document.getElementById('srcText').classList.remove('is-invalid');
+                return true;
+            }
+        }
+    
+        function checkKey() {
+                if (document.getElementById('key1').value.length === 0) {
+                document.getElementById('key1').classList.add('is-invalid');
+                return false;
+            }
+            else {
+                document.getElementById('key1').classList.remove('is-invalid');
+                return true;
+            }
+            }
+    
+        function changeLanguage() {
+            var lang = document.getElementById('language').value;
+            if (lang === 'custom')
+                showElement('alphabetWrapper');
+            else
+                hideElement('alphabetWrapper');
+        }
+    
+        function getAlphabet() {
+            var language = document.getElementById("language").value;
+            switch (language) {
+                case 'en':
+                    return 'abcdefghijklmnopqrstuvwxyz';
+                case 'es':
+                    return 'abcdefghijklmnñopqrstuvwxyz';
+                case 'sv':
+                    return 'abcdefghijklmnopqrstuvwxyzåäö';
+                case 'fr':
+                    return 'abcdefghijklmnopqrstuvwxyz';
+                case 'de':
+                    return 'abcdefghijklmnopqrstuvwxyzäöüß';
+                case 'pt':
+                    return 'abcdefghijklmnopqrstuvwxyz';
+                case 'it':
+                    return 'abcdefghilmnopqrstuvz';
+                default:
+                    var alphabet = document.getElementById("alphabet").value.toLowerCase();
+                    if (alphabet.length === 0)
+                        alphabet = new Array(95).fill(0).map(function (_, i) { return String.fromCharCode(i+32) }).join('');
+                    return alphabet;
+            }
+        }
+    
+        function getSrcText() {
+            var text = document.getElementById('srcText').value;
+            return text;
+    
+            //var keepMode = document.getElementById('keepMode').value;
+    
+            //if (keepMode == 'letters') {
+            //    var alphabet = getAlphabet();
+            //    var newText = '';
+            //    for (var i = 0; i < text.length; i++) {
+            //        if (alphabet.indexOf(text[i]) != -1)
+            //            newText += text[i];
+            //    }
+    
+            //    text = newText;
+            //}
+            //return text;
+        }
+    
+        function updateTexts() {
+            var originalText = getSrcText();
+            var options = getOptions();
+            var alphabet = getAlphabet();
+            var key = getKey();
+    
+            var keyLength = key.length;
+                var keyAlphabet = alphabet.length != 95 ? alphabet : 'abcdefghijklmnopqrstuvwxyz';
+            var resultText = '';
+    
+            if (!KeepAllCharacters) {
+                var textMask = getTextMask(originalText, options, alphabet);
+                var normalizedText = getNormalizedText(originalText, textMask);
+                if (normalizedText.length > 0 && keyLength > 0) {
+                    var transformedText = DecryptMode ? decrypt(normalizedText, alphabet, key, keyAlphabet) : encrypt(normalizedText, alphabet, key, keyAlphabet);
+                    resultText = restoreText(originalText, transformedText, textMask)
+                }
+            } else {
+                if (keyLength > 0)
+                    resultText = DecryptMode ? decrypt(originalText, alphabet, key, keyAlphabet) : encrypt(originalText, alphabet, key, keyAlphabet);
+            }
+    
+            document.getElementById("resultText").value = resultText;
+        }
+    
+        function htmlEncode(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    
+        function getOptions() {
+            var language = document.getElementById("language").value;
+    
+            return { preserveCasing: true, language: language, includeSpace: true };
+        }
+    
+        function getTextMask(text, options, alphabet) {
+            var arr = text.split('');
+            var alphabetUpper = alphabet.toUpperCase();
+            var alphabetLower = alphabet.toLowerCase();
+            var length = text.length;
+            for (var i = 0; i < length; i++) {
+                var isUpperLetter = alphabetUpper.indexOf(text[i]) !== -1;
+                var isLowerLetter = alphabetLower.indexOf(text[i]) !== -1;
+                var l = '-';
+                if (options.preserveCasing && isUpperLetter)
+                    l = 'A';
+                else if (isUpperLetter || isLowerLetter)
+                    l = 'a';
+                else if (options.includeSpace)
+                    l = '+';
+                arr[i] = l;
+            }
+    
+            return arr.join('');
+        }
+    
+        function getNormalizedText(text, textMask) {
+            var arr = [];
+            var length = textMask.length;
+            for (var i = 0; i < length; i++) {
+                if (textMask[i] === 'a' || textMask[i] === 'A')
+                    arr.push(text[i]);
+            }
+    
+            return arr.join('').toLowerCase();
+        }
+    
+        function restoreText(originalText, normalizedText, textMask) {
+            var arr = originalText.split('');
+            var j = 0;
+            var length = textMask.length;
+            for (var i = 0; i < length; i++) {
+                switch (textMask[i]) {
+                    case 'a':
+                        arr[i] = normalizedText[j++]; break;
+                    case 'A':
+                        arr[i] = normalizedText[j++].toUpperCase(); break;
+                    case '-':
+                        arr[i] = '';
+                }
+            }
+    
+            return arr.join('');
+        }
+    
+    
+        function getKey() {
+            var key = document.getElementById("key1").value;
+            key = key.trim().toLowerCase();
+            return key;
+        }
+        
+        function getKeyShifts(key, keyAlphabet) {
+            var arr = new Array(key.length);
+            for (var i = 0; i < key.length; i++) {
+                var p = keyAlphabet.indexOf(key[i]);
+                arr[i] = p;
+            }
+    
+            return arr;
+        }
+    
+        function clearText() {
+            document.getElementById("srcText").value = '';
+            document.getElementById("resultText").value = '';
+        }
+    
+        function autosolve() {
+            var inputText = getSrcText();
+            if (inputText === '')
+                return;
+    
+            var language = document.getElementById("language").value;
+            if (language === 'custom')
+                return;
+    
+            var msg = { inputText: inputText, lang: language };
+                                msg.maxResults = parseInt(document.getElementById('maxResults').value);
+                    msg.spacingMode = document.getElementById('spacingMode').value;
+            msg.dictionaryWeight = 3;
+            msg.reportInterval = 200;
+    
+            resetAutoSolverProgress();
+    
+            worker = new Worker('/script/caesar-cryptanalysis.js');
+    
+            worker.onmessage = function (e) {
+                updateSearchResults(e.data);
+            };
+            disableSearchButton();
+            clearSearchResults();
+            worker.postMessage(msg);
+        }
+    
+        function resetAutoSolverProgress() {
+            var element = document.getElementById('autoSolveProgress');
+            element.classList.add('progress-bar-animated', 'progress-bar-striped');
+            element.style.width = '10%';
+        }
+    
+        function updateAutoSolverProgress(progress) {
+            var element = document.getElementById('autoSolveProgress');
+            element.style.width = Math.round(10 + progress * 0.9).toString() + '%';
+        }
+    
+        function stopAutoSolverProgress() {
+            var element = document.getElementById('autoSolveProgress');
+            element.classList.remove('progress-bar-animated', 'progress-bar-striped');
+        }
+    
+        function cancel() {
+            worker.terminate();
+            enableSearchButton();
+            stopAutoSolverProgress();
+        }
+    
+        function disableSearchButton() {
+            var btn = document.getElementById("searchbtn");
+            btn.classList.add("progress-bar-striped", "progress-bar-animated");
+            btn.disabled = true;
+            document.getElementById("cancelbtn").classList.remove("d-none");
+        }
+    
+        function enableSearchButton() {
+            var btn = document.getElementById("searchbtn");
+            btn.classList.remove("progress-bar-striped", "progress-bar-animated");
+            btn.removeAttribute("disabled");
+            document.getElementById("cancelbtn").classList.add("d-none");
+        }
+    
+        function clearSearchResults() {
+            document.getElementById('autosolvetbody').innerHTML = '<tr><td></td><td></td><td>Please wait...</td></tr>';
+        }
+    
+        function updateSearchResults(results) {
+            if (results.isChanged) {
+                var autosolvetbody = '';
+                var items = results.items;
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    autosolvetbody += '<tr><td>' + item.score + '</td><td>' + htmlEncode(item.key) + '</td><td>' + htmlEncode(item.text) + '</td></tr>';
+                }
+                document.getElementById("autosolvetbody").innerHTML = autosolvetbody;
+            }
+            updateAutoSolverProgress(results.progress);
+    
+            if (results.isFinal) {
+                enableSearchButton();
+                stopAutoSolverProgress();
+            }
+        }
+    
+        function showErrorMessage(msg) {
+            alert(msg);
+        }
+    
+    </script>
+</body>
+</html>
